@@ -96,13 +96,4 @@ table_refresh = ("""
     
 """)
 
-# Insert Records
-Demographics_insert = ("""
-        INSERT INTO Demographics
-        (city,state,race,mid_age,male_population,female_population,total_population,
-        num_of_verterans,foreign_born,avg_household_size,state_cd) VALUES
-        (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
-        ON CONFLICT(city,state,race) DO UPDATE SET 
-        mid_age=%s,male_population=%s,female_population=%s,total_population=%s,
-        num_of_verterans=%s,foreign_born=%s,avg_household_size=%s,state_cd=%s
-""")
+
