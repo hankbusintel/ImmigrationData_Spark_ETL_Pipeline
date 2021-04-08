@@ -149,3 +149,89 @@ Lui94addrl_insert = ("""
         ON CONFLICT(i94addr) DO UPDATE SET 
         name=%s
 """)
+
+
+spark_clean_demo = ("""
+    WITH C AS
+        (
+            SELECT 
+                *, row_number() over (partition by City,State,Race order by `Total Population` desc) as rank
+            FROM demo
+            WHERE coalesce(City,'') <> ''
+            AND coalesce(State,'') <> ''
+            AND coalesce(Race,'') <> ''  
+        )
+        SELECT city, 
+               state, 
+               race, 
+               CAST(`Median age` AS INT) AS mid_age,
+               CAST(`Male Population` AS INT) AS male_population,
+               CAST(`Female Population` AS INT) as female_population,             
+               CAST(`Total Population` AS INT) as total_population,
+               CAST(`Number of Veterans` AS INT) as num_of_verterans,
+               CAST(`Foreign-born` AS INT) AS foreign_born,
+               CAST(`Average Household Size` AS FLOAT) AS avg_household_size,
+               `State Code` as state_cd,
+               CAST(`Count` AS INT) AS count
+        FROM C
+        WHERE rank = 1  
+""")
+
+spark_clean_airport=("""
+    WITH C AS
+        (
+            SELECT ident ,type,name,iso_region,municipality,
+            row_number() over (partition by ident order by `type` desc) as rank
+            FROM airport
+            WHERE iso_country='US'
+            AND coalesce(municipality,'') <> '' 
+            AND coalesce(type,'') <> ''
+            AND coalesce(name,'') <> ''
+            AND coalesce(ISO_region,'') <> ''
+            AND coalesce(ident,'') <> ''
+        )
+        SELECT ident as airport_id,
+               type,
+               name,
+               replace(iso_region,'US-','') AS region,
+        municipality as city FROM C
+        WHERE rank = 1
+""")
+
+spark_clean_temp = ("""
+    SELECT           
+           distinct 
+           cast(dt as date) as date,            
+           city,
+           country,
+           latitude,
+           longitude,
+           cast(AverageTemperature as float) as avg_temp,
+           cast(AverageTemperatureUncertainty AS float) as avg_temp_uncertain
+    FROM tempreture
+    WHERE coalesce(AverageTemperature,'') <>'' 
+    AND coalesce(AverageTemperatureUncertainty,'') <> ''
+    AND Country = 'United States'
+    order by Date 
+    
+""")
+
+spark_clean_imrr = ("""
+         SELECT
+           cast(cicid as bigint),
+           cast(i94yr as int),
+           cast(i94mon as int),
+           i94port, 
+           cast(i94cit as int) as i94cit,
+           cast(i94res as int) as i94res,
+           cast(i94mode as int) as i94mode,
+           date_add('1960-01-01',arrdate) as arrdate,
+           date_add('1960-01-01',depdate) as depdate,
+           i94addr,
+           cast(biryear as int) as biryear,
+           gender,
+           airline,
+           visatype 
+        FROM immigration
+""")
+

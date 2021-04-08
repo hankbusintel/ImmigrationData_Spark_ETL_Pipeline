@@ -5,22 +5,23 @@ import os
 class spark():
     def __init__(self):
         self.spark = None
-        self.i94path = '../../data/18-83510-I94-Data-2016/i94_apr16_sub.sas7bdat'
-        self.demoPath = "us-cities-demographics.csv"
-        self.airportPath = 'airport-codes_csv.csv'
-        self.tempreturePath = '../../data2/GlobalLandTemperaturesByCity.csv'
+        self.i94path = r'C:\Users\hangg\OneDrive\Desktop\OneDrive\Udacity DE\Project 6\data\i94_apr16_sub.sas7bdat'
+        self.demoPath = r"C:\Users\hangg\OneDrive\Desktop\OneDrive\Udacity DE\Project 6\data\us-cities-demographics.csv"
+        self.airportPath = r'C:\Users\hangg\OneDrive\Desktop\OneDrive\Udacity DE\Project 6\data\airport-codes_csv.csv'
+        self.tempreturePath = r'C:\Users\hangg\OneDrive\Desktop\OneDrive\Udacity DE\Project 6\data\GlobalLandTemperaturesByCity.csv'
         self.paqutRoot = ''
 
     def get(self):
-        spark = SparkSession.builder.\
-        config("spark.jars.packages","saurfang:spark-sas7bdat:2.0.0-s_2.11")\
+        spark = SparkSession.builder\
+        .config("spark.jars.packages","saurfang:spark-sas7bdat:3.0.0-s_2.12") \
+        .config("spark.jars", "/jar/postgresql-42.2.19.jar") \
         .enableHiveSupport().getOrCreate()
         self.spark=spark
 
-    def registerSparkSqlTable(self,sparkFileObject,FilePath,parquetPath,tablename):
+    def registerSparkSqlTable(self,sparkFil5514eObject,FilePath,parquetPath,tablename):
         size = Path(FilePath).stat().st_size
         if size > 101990272:
-            sparkFileObject.write.mode('overwrite').parquet(parquetPath)
+            #sparkFileObject.write.mode('overwrite').parquet(parquetPath)
             df = self.spark.read.parquet(parquetPath)
             df.registerTempTable(tablename)
         else:
@@ -38,6 +39,10 @@ class spark():
 
         #i94 file
         self.registerSparkSqlTable(df_spark_immgrate, self.i94path, os.path.join(self.paqutRoot, "sas_data"),"immigration")
-        self.registerSparkSqlTable(df_spark_immgrate, self.demoPath, os.path.join(self.paqutRoot, "demo_data"),"demo")
-        self.registerSparkSqlTable(df_spark_immgrate, self.airportPath, os.path.join(self.paqutRoot, "airport_data"),"airport")
-        self.registerSparkSqlTable(df_spark_immgrate, self.tempreturePath, os.path.join(self.paqutRoot, "temp_data"),"tempreture")
+        self.registerSparkSqlTable(df_spark_demo, self.demoPath, os.path.join(self.paqutRoot, "demo_data"),"demo")
+        self.registerSparkSqlTable(df_spark_airport, self.airportPath, os.path.join(self.paqutRoot, "airport_data"),"airport")
+        self.registerSparkSqlTable(df_spark_tempreture, self.tempreturePath, os.path.join(self.paqutRoot, "temp_data"),"tempreture")
+
+    def getCleansedDataFrame(self, query):
+        df = self.spark.sql(query)
+        return df

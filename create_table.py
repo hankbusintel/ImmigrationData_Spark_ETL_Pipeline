@@ -1,5 +1,4 @@
 
-
 table_refresh = ("""
     DROP TABLE IF EXISTS Demographics;
     DROP TABLE IF EXISTS airport;
@@ -9,7 +8,7 @@ table_refresh = ("""
     DROP TABLE IF EXISTS Lui94prtl;
     DROP TABLE IF EXISTS Lui94mode;
     DROP TABLE IF EXISTS Lui94addrl;
-    
+
     CREATE TABLE IF NOT EXISTS Demographics 
     (
         city varchar,
@@ -25,18 +24,18 @@ table_refresh = ("""
         state_cd varchar,
         PRIMARY KEY(city, state, race)
     );
-    
+
     CREATE TABLE IF NOT EXISTS airport
     (
         airport_id int,
         type varchar,
         name varchar,
         region varchar,
-        city varchar
-        PRIMARY KEY(airport_id)
+        city varchar,
+        PRIMARY KEY (airport_id)
     );
-    
-    
+
+
     CREATE TABLE IF NOT EXISTS tempreture
     (
         date date,
@@ -48,7 +47,7 @@ table_refresh = ("""
         avg_temp_uncertain float,
         PRIMARY KEY (date,city, country, latitude, longitude)
     );
-    
+
     CREATE TABLE IF NOT EXISTS immigration
     (
         cicid bigint,
@@ -65,35 +64,37 @@ table_refresh = ("""
         airline varchar,
         visatype varchar
     );
-    
+
     CREATE TABLE Lui94cntyl
     (
         i94citres int,
         country_name varchar,
-        PRIMARY KEY (citres_id)
+        PRIMARY KEY (i94citres)
     );
-    
+
     CREATE TABLE Lui94prtl
     (
         i94port varchar,
         city varchar,
-        state varchar
+        state varchar,
         PRIMARY KEY (i94port)
     );
-    
+
     CREATE TABLE Lui94mode
     (
         i94mode int,
-        type varchar
+        type varchar,
+        PRIMARY KEY (i94mode)
     );
-    
+
     CREATE TABLE Lui94addrl
     (
         i94addr varchar,
-        name varchar
+        name varchar,
+        PRIMARY KEY (i94addr)
     )
-    
-    
+
+
 """)
 
 
