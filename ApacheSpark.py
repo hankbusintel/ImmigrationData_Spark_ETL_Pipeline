@@ -18,7 +18,7 @@ class spark():
         .enableHiveSupport().getOrCreate()
         self.spark=spark
 
-    def registerSparkSqlTable(self,sparkFil5514eObject,FilePath,parquetPath,tablename):
+    def registerSparkSqlTable(self,sparkFileObject,FilePath,parquetPath,tablename):
         size = Path(FilePath).stat().st_size
         if size > 101990272:
             #sparkFileObject.write.mode('overwrite').parquet(parquetPath)
