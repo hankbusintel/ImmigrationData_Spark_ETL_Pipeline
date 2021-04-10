@@ -1,15 +1,14 @@
-import configparser
-config = configparser.ConfigParser()
-config.read('Immigration.cfg')
 import psycopg2
 
 
 class postgre():
     
     def __init__(self):
-        self.host=config.get("PostgreSql","host")
-        self.port=config.get("PostgreSql","port")
-        self.dbname=config.get("PostgreSql","dbname")
+        from configuration import config
+        config = config.get()
+        self.host= config.get("PostgreSql","host")
+        self.port= config.get("PostgreSql","port")
+        self.dbname= config.get("PostgreSql","dbname")
         self.user = config.get("PostgreSql","user")
         self.password = config.get("PostgreSql","pw")
         self.driver = config.get("PostgreSql","driver")
@@ -32,9 +31,13 @@ class postgre():
         conn.set_session(autocommit=True)
         return cur,conn
     
-    def executeBatch(cur,queryList):
-        for query in queryList:
-            cur.execute(query)
+    def executeBatch(self,cur,queryList):
+        for query_title in queryList:
+            print ("Inserting table {}".format(query_title))  
+            #print (queryList[query_title])
+            cur.execute(queryList[query_title])
+            #print ("error during Insertion")
+            print ("Success")
             
     #Load Meta data
     def getInsertRowList(self,table,row):
@@ -56,7 +59,26 @@ class postgre():
             cur.execute(query,self.getInsertRowList(table,row))
             
     def upsertAllMetaData(self,cur,dic_source,dic_query):
+        print ("Upserting meta data to Postgre sql.")
         for table in dic_source:
             self.upsertMetaData(table,cur,dic_source,dic_query[table])
+        print ("Success")
 
-    
+    #check data quality dynamically
+    def check(self,cur,query,exp_result):
+        cur.execute(query)
+        result = cur.fetchall()[0][0]
+        return result,result==exp_result
+
+    def check_data_quality(self,cur,data_quality_list):
+        for query in data_quality_list:
+            expect_result =query["expected_result"]
+            sql = query["check_sql"]
+            print ("Checking query: {},exp_result={}".format(sql,expect_result))
+            result,ispass = self.check(cur,sql,expect_result)
+            if not ispass:
+                print ("Check Failed")
+                raise ValueError(f"Check Faield. There are {result} 'null' in the table. \
+                             Expected value is {expect_result}")
+            else:
+                print ("Check passed")

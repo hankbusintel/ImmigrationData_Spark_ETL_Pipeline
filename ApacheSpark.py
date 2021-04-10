@@ -2,14 +2,17 @@ from pyspark.sql import SparkSession
 from pathlib import Path
 import os
 
+
 class spark():
     def __init__(self):
+        from configuration import config
+        config = config.get()
         self.spark = None
-        self.i94path = r'C:\Users\hangg\OneDrive\Desktop\OneDrive\Udacity DE\Project 6\data\i94_apr16_sub.sas7bdat'
-        self.demoPath = r"C:\Users\hangg\OneDrive\Desktop\OneDrive\Udacity DE\Project 6\data\us-cities-demographics.csv"
-        self.airportPath = r'C:\Users\hangg\OneDrive\Desktop\OneDrive\Udacity DE\Project 6\data\airport-codes_csv.csv'
-        self.tempreturePath = r'C:\Users\hangg\OneDrive\Desktop\OneDrive\Udacity DE\Project 6\data\GlobalLandTemperaturesByCity.csv'
-        self.paqutRoot = ''
+        self.i94path = config.get("File","i94Path")
+        self.demoPath = config.get("File","demoPath")
+        self.airportPath = config.get("File","airportPath")
+        self.tempreturePath = config.get("File","tempreturePath")
+        self.paqutRoot = config.get("File","paqutRoot")
 
     def get(self):
         spark = SparkSession.builder\

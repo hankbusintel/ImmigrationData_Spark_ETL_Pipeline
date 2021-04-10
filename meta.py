@@ -1,11 +1,11 @@
-import configparser
-config = configparser.ConfigParser()
-config.read('Immigration.cfg')
+
 import pandas as pd
 
 
 class sasDesc():
     def __init__(self):
+        from configuration import config
+        config = config.get()
         self.metaFile=config.get("File","MetaData")
 
     def getTitle(self,string,d):
@@ -22,6 +22,7 @@ class sasDesc():
         return newrow
 
     def getMetaDataDict(dic_meta):
+        print ("Reading metadata files")
         sas = sasDesc()
         title=None
         l,dic=[],{}

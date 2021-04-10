@@ -1,27 +1,32 @@
 
-from create_table import table_refresh
 from ApacheSpark import spark
 from sql_queries import *
 from Postgre import postgre
+from meta import sasDesc
+from configuration import MetaData,dic_query,dic_mainInsertList,data_quality
 
 def SparkReadData():
+    print ("Building Spark session and creating view for Spark sql.")
     s = spark()
     s.get()
     s.createSparkSql()
+    print ("success")
     return s
 
 def loadSparkToStagTable(spark,postgre):
     # Get cleansed spark dataframe
+    print ("Cleansing spark data...")
     immgr = spark.getCleansedDataFrame(spark_clean_imrr)
     temp = spark.getCleansedDataFrame(spark_clean_temp)
     demo = spark.getCleansedDataFrame(spark_clean_demo)
     airport = spark.getCleansedDataFrame(spark_clean_airport)
-    
+    print("loading to postgre staging table...")
     #load the cleansed dataframe to postgre staging table.
-    p.sparkWriteToPostgre(immgr,"stg_immigration")
-    p.sparkWriteToPostgre(temp, "stg_tempreture")
-    p.sparkWriteToPostgre(demo, "stg_demographic")
-    p.sparkWriteToPostgre(airport, "stg_airport")
+    postgre.sparkWriteToPostgre(immgr,"stg_immigration")
+    postgre.sparkWriteToPostgre(temp, "stg_tempreture")
+    postgre.sparkWriteToPostgre(demo, "stg_demographic")
+    postgre.sparkWriteToPostgre(airport, "stg_airport")
+    print ("success")
 
 def main():
 
@@ -43,6 +48,11 @@ def main():
     p.upsertAllMetaData(cur,metadata,dic_query)
     
     #Upsert destination tables
+    p.executeBatch(cur,dic_mainInsertList)
+    
+    #data quality check
+    p.check_data_quality(cur,data_quality)
+    
     conn.close()
     
 if __name__ == "__main__":

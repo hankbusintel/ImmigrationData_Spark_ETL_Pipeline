@@ -1,43 +1,48 @@
-MetaData = {
-        "value i94cntyl":"Lui94cntyl",
-        "value $i94prtl":"Lui94prtl",
-        "value i94model":"Lui94mode",
-        "value i94addrl":"Lui94addrl"
-    }
 
 
 # Insert Records
 Demographics_insert = ("""
         INSERT INTO Demographics
         (
-            city,
-            state,
-            race,
-            mid_age,
-            male_population,
-            female_population,
-            total_population,
-            num_of_verterans,
-            foreign_born,
-            avg_household_size,
-            state_cd
-        ) VALUES
-        (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
+                city,
+                state,
+                race,
+                mid_age,
+                male_population,
+                female_population,
+                total_population,
+                num_of_verterans,
+                foreign_born,
+                avg_household_size,
+                state_cd
+        )
+        SELECT  city,
+                state,
+                race,
+                mid_age,
+                male_population,
+                female_population,
+                total_population,
+                num_of_verterans,
+                foreign_born,
+                avg_household_size,
+                state_cd
+        FROM stg_Demographic
         ON CONFLICT(city,state,race) DO UPDATE SET 
-        mid_age=%s,
-        male_population=%s,
-        female_population=%s,
-        total_population=%s,
-        num_of_verterans=%s,
-        foreign_born=%s,
-        avg_household_size=%s,
-        state_cd=%s
+        mid_age=EXCLUDED.mid_age,
+        male_population=EXCLUDED.male_population,
+        female_population=EXCLUDED.female_population,
+        total_population=EXCLUDED.total_population,
+        num_of_verterans=EXCLUDED.num_of_verterans,
+        foreign_born=EXCLUDED.foreign_born,
+        avg_household_size=EXCLUDED.avg_household_size,
+        state_cd=EXCLUDED.state_cd
 """)
 
 
 
 airport_insert = ("""
-        INSERT INTO airport_insert
+        INSERT INTO airport
         (
             airport_id,
             type,
@@ -45,19 +50,23 @@ airport_insert = ("""
             region ,
             city
         ) 
-        VALUES
-        (%s,%s,%s,%s,%s)
+        SELECT 
+            airport_id,
+            type,
+            name,
+            region ,
+            city
+        FROM stg_airport
         ON CONFLICT(airport_id) DO UPDATE SET 
-        airport_id=%s,
-        type=%s,
-        name=%s,
-        region=%s,
-        city=%s
+        type=EXCLUDED.type,
+        name=EXCLUDED.type,
+        region=EXCLUDED.type,
+        city=EXCLUDED.type
 """)
 
 
 tempreture_insert = ("""
-        INSERT INTO airport_insert
+        INSERT INTO tempreture
         (
             date,
             city,
@@ -67,15 +76,21 @@ tempreture_insert = ("""
             avg_temp,
             avg_temp_uncertain
         ) 
-        VALUES
-        (%s,%s,%s,%s,%s,%s,%s)
+        SELECT date,
+                city,
+                country,
+                latitude,
+                longitude,
+                avg_temp,
+                avg_temp_uncertain
+        FROM stg_tempreture
         ON CONFLICT( date,city,country,latitude,longitude) DO UPDATE SET 
-        avg_temp=%s,
-        avg_temp_uncertain=%s
+        avg_temp=EXCLUDED.avg_temp,
+        avg_temp_uncertain=EXCLUDED.avg_temp
 """)
 
 immigration_insert = ("""
-        INSERT INTO Demographics
+        INSERT INTO immigration
         (
             cicid,
             i94yr,
@@ -90,21 +105,34 @@ immigration_insert = ("""
             gender,
             airline,
             visatype
-        ) VALUES
-        (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
+        ) 
+        SELECT cicid,
+            i94yr,
+            i94mon,
+            i94port,
+            i94cit,
+            i94res,
+            arrdate,
+            depdate,
+            i94addr,
+            biryear,
+            gender,
+            airline,
+            visatype
+        FROM stg_immigration
         ON CONFLICT(cicid) DO UPDATE SET 
-        i94yr=%s,
-        i94mon=%s,
-        i94port=%s,
-        i94cit=%s,
-        i94res=%s,
-        arrdate=%s,
-        depdate=%s,
-        i94addr=%s,
-        biryear=%s,
-        gender=%s,
-        airline=%s,
-        visatype=%s
+        i94yr=EXCLUDED.i94yr,
+        i94mon=EXCLUDED.i94mon,
+        i94port=EXCLUDED.i94port,
+        i94cit=EXCLUDED.i94cit,
+        i94res=EXCLUDED.i94res,
+        arrdate=EXCLUDED.arrdate,
+        depdate=EXCLUDED.depdate,
+        i94addr=EXCLUDED.i94addr,
+        biryear=EXCLUDED.biryear,
+        gender=EXCLUDED.gender,
+        airline=EXCLUDED.airline,
+        visatype=EXCLUDED.visatype
 """)
 
 Lui94cntyl_insert = ("""
@@ -159,13 +187,7 @@ Lui94addrl_insert = ("""
 """)
 
 
-dic_query = {
-    "Lui94cntyl":Lui94cntyl_insert,
-    "Lui94prtl":Lui94prtl_insert,
-    "Lui94mode":Lui94mode_insert,
-    "Lui94addrl":Lui94addrl_insert
-    
-}
+
 
 
 spark_clean_demo = ("""
@@ -278,7 +300,7 @@ table_refresh = ("""
     );
     CREATE TABLE IF NOT EXISTS airport
     (
-        airport_id int,
+        airport_id varchar,
         type varchar,
         name varchar,
         region varchar,
@@ -310,7 +332,8 @@ table_refresh = ("""
         biryear int,
         gender varchar,
         airline varchar,
-        visatype varchar
+        visatype varchar,
+        PRIMARY KEY (cicid)
     );
     CREATE TABLE Lui94cntyl
     (
