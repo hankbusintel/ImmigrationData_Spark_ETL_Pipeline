@@ -15,6 +15,10 @@ class spark():
         self.paqutRoot = config.get("File","paqutRoot")
 
     def get(self):
+        """
+        Create the spark session.
+        :return: return the spark object.
+        """
         spark = SparkSession.builder\
         .config("spark.jars.packages","saurfang:spark-sas7bdat:3.0.0-s_2.12") \
         .config("spark.jars", "/jar/postgresql-42.2.19.jar") \
@@ -22,6 +26,13 @@ class spark():
         self.spark=spark
 
     def registerSparkSqlTable(self,sparkFileObject,FilePath,parquetPath,tablename):
+        """
+        :param sparkFileObject:  Readed spark object(sas/csv).
+        :param FilePath: source file location.
+        :param parquetPath: Path where to store the parquet file.
+        :param tablename: Spark sql temp view name.
+        :return: void
+        """
         size = Path(FilePath).stat().st_size
         if size > 101990272:
             #sparkFileObject.write.mode('overwrite').parquet(parquetPath)
@@ -31,6 +42,10 @@ class spark():
             sparkFileObject.registerTempTable(tablename)
 
     def createSparkSql(self):
+        """
+        Get readed spark object, create parquet file/ register spark temp table view respectively.
+        :return: void
+        """
         df_spark_immgrate = self.spark.read.format('com.github.saurfang.sas.spark').options(header='true',delimiter=None)\
             .load(self.i94path)
         df_spark_airport = self.spark.read.format('csv').options(header='true', delimiter=",")\
@@ -47,5 +62,9 @@ class spark():
         self.registerSparkSqlTable(df_spark_tempreture, self.tempreturePath, os.path.join(self.paqutRoot, "temp_data"),"tempreture")
 
     def getCleansedDataFrame(self, query):
+        """
+        :param query: Sparked cleansd query from sql_queries.py
+        :return: cleasned dataframe.
+        """
         df = self.spark.sql(query)
         return df

@@ -3,6 +3,9 @@ from sql_queries import *
 
 class config():
     def get():
+        """
+        :return: configuration object defined in Immigration.cfg file.
+        """
         config = configparser.ConfigParser()
         config.read_file(open(r'Immigration.cfg'))
         return config

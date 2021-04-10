@@ -13,15 +13,28 @@ class sasDesc():
             return d[string.strip()]
 
     def cleanRowData(self,string):
+        """
+        Remove tab, CR/LF, ssssssempty spaces.
+        :param string: row string from pandas dataframe
+        :return: cleansed new string
+        """
         return string.replace(";","").replace("'","").replace("\n","").replace("\t","").strip()
 
 
     def cleancolumn(self,row):
+        """
+        :param row: each row string from pandas dataframe
+        :return: cleansed new row.
+        """
         col1,col2 = self.cleanRowData(row[0]),self.cleanRowData(row[1])
         newrow = (col1,col2)
         return newrow
 
     def getMetaDataDict(dic_meta):
+        """
+        :param dic_meta: MetaData dictionary from configuration.py
+        :return: dataframe from sas file.
+        """
         print ("Reading metadata files")
         sas = sasDesc()
         title=None

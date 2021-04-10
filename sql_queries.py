@@ -275,14 +275,7 @@ spark_clean_imrr = ("""
 """)
 
 table_refresh = ("""
-    DROP TABLE IF EXISTS Demographics;
-    DROP TABLE IF EXISTS airport;
-    DROP TABLE IF EXISTS tempreture;
-    DROP TABLE IF EXISTS immigration;
-    DROP TABLE IF EXISTS Lui94cntyl;
-    DROP TABLE IF EXISTS Lui94prtl;
-    DROP TABLE IF EXISTS Lui94mode;
-    DROP TABLE IF EXISTS Lui94addrl;
+
     CREATE TABLE IF NOT EXISTS Demographics 
     (
         city varchar,

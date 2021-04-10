@@ -6,6 +6,10 @@ from meta import sasDesc
 from configuration import MetaData,dic_query,dic_mainInsertList,data_quality
 
 def SparkReadData():
+    """
+    Create spark session, create spark SQL temp table.
+    :return: ApacheSpark object
+    """
     print ("Building Spark session and creating view for Spark sql.")
     s = spark()
     s.get()
@@ -14,6 +18,12 @@ def SparkReadData():
     return s
 
 def loadSparkToStagTable(spark,postgre):
+    """
+    Write cleansed spark data to postgre staging table.
+    :param spark: ApacheSpark object (ApacheSpark.py)
+    :param postgre: Postgre object(Postgre.py)
+    :return: void
+    """
     # Get cleansed spark dataframe
     print ("Cleansing spark data...")
     immgr = spark.getCleansedDataFrame(spark_clean_imrr)
