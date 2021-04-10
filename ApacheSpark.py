@@ -35,7 +35,7 @@ class spark():
         """
         size = Path(FilePath).stat().st_size
         if size > 101990272:
-            #sparkFileObject.write.mode('overwrite').parquet(parquetPath)
+            sparkFileObject.write.mode('overwrite').parquet(parquetPath)
             df = self.spark.read.parquet(parquetPath)
             df.registerTempTable(tablename)
         else:
