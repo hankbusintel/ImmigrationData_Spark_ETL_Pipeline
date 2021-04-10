@@ -35,6 +35,6 @@ dic_mainInsertList = {
 
 
 data_quality = [
-        {'check_sql': "select count(*) from immigration where coalesce(cast(biryear as varchar),'') =''",'expected_result': 0},
+        {'check_sql': "select count(*) from immigration where coalesce(cast(i94yr as varchar),'') =''",'expected_result': 0},
         {'check_sql': "select count(*) from immigration where coalesce(cast(i94port as varchar),'') =''",'expected_result': 0}
 ]

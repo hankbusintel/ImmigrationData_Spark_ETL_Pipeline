@@ -328,26 +328,26 @@ table_refresh = ("""
         visatype varchar,
         PRIMARY KEY (cicid)
     );
-    CREATE TABLE Lui94cntyl
+    CREATE TABLE IF NOT EXISTS Lui94cntyl
     (
         i94citres int,
         country_name varchar,
         PRIMARY KEY (i94citres)
     );
-    CREATE TABLE Lui94prtl
+    CREATE TABLE IF NOT EXISTS Lui94prtl
     (
         i94port varchar,
         city varchar,
         state varchar,
         PRIMARY KEY (i94port)
     );
-    CREATE TABLE Lui94mode
+    CREATE TABLE IF NOT EXISTS Lui94mode
     (
         i94mode int,
         type varchar,
         PRIMARY KEY (i94mode)
     );
-    CREATE TABLE Lui94addrl
+    CREATE TABLE IF NOT EXISTS Lui94addrl
     (
         i94addr varchar,
         name varchar,
