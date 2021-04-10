@@ -62,5 +62,6 @@ Create a DNS service for the database connection
 Build Restful API on top of the postgreSql database also ensure the API can be call be multiple users at the same time.
 
 **Execution Instructions**
-etl.py file is the main script which will read/load the data.
+1. Inter configuration in the immigration.cfg files, including postgre sql connection properties, and file paths.
+2. etl.py file is the main script which will read/load the data.
 Execute the etl.py files using python.exe.
